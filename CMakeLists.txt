@@ -43,5 +43,11 @@ add_executable(imgui_template ${sources} ${IMGUI_DIR}/backends/imgui_impl_glfw.c
 											  ${IMGUI_DIR}/imgui_demo.cpp	
 										      ${IMGUI_DIR}/imgui_tables.cpp
 											  ${IMGUI_DIR}/imgui_widgets.cpp)
-
+set_target_properties(
+    imgui_template
+    PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
+               LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
+)
 target_link_libraries(imgui_template ${LIBRARIES})
+
+
