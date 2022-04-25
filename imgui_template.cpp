@@ -435,7 +435,7 @@ int main(int, char**)
     //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("misc/DinaRemaster.ttc", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+    io.Fonts->AddFontFromFileTTF("C:\\Users\\barto\\Source\\Repos\\Baaartosz\\imgui_template\\misc\\dina.ttf", 22.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     /*ImFont* font = io.Fonts->AddFontFromFileTTF("misc/DinaRemaster.ttc", 16.0f);
     IM_ASSERT(font != NULL);*/
