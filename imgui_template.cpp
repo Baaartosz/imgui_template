@@ -359,7 +359,7 @@ int main(int, char**)
         return 1;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
+    //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+Vulkan example", NULL, NULL);
 
     // Setup Vulkan
@@ -435,14 +435,15 @@ int main(int, char**)
     //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("misc/DinaRemaster.ttc", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    io.Fonts->AddFontFromFileTTF("C:\\Users\\barto\\Source\\Repos\\Baaartosz\\imgui_template\\misc\\dina.ttf", 22.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
-    /*ImFont* font = io.Fonts->AddFontFromFileTTF("misc/DinaRemaster.ttc", 16.0f);
-    IM_ASSERT(font != NULL);*/
+    //io.Fonts->AddFontFromFileTTF("misc\\dina.ttf", 22.0f);
+    ////io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
+    //*ImFont* font = io.Fonts->AddFontFromFileTTF("misc/dina.ttf", 16.0f);
+    //IM_ASSERT(font != NULL);
 
     static int size_pixels = 16;
-    ImFont* font1 = io.Fonts->AddFontFromFileTTF("C:/Dev/cpp/imgui_template/misc/dina.ttf", size_pixels);
-    ImFont* font2 = io.Fonts->AddFontFromFileTTF("C:/Dev/cpp/imgui_template/misc/dina_bold.ttf", size_pixels);
+    ImFont* dina = io.Fonts->AddFontFromFileTTF("../../../misc/dina.ttf", size_pixels);
+    ImFont* dina_bold = io.Fonts->AddFontFromFileTTF("../../../misc/dina_bold.ttf", size_pixels);
+    ImFont* roboto = io.Fonts->AddFontFromFileTTF("../../../misc/roboto.ttf", 18);
 
     // Upload Fonts
     {
@@ -479,6 +480,13 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    // move with tool bar code bits
+
+    // ImGuiContext* GImGui = NULL;
+    // ImGuiContext& g = *GImGui;
+    // g.ActiveId
+    // GetInputSourceName(g.ActiveIdSource)
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -512,9 +520,9 @@ int main(int, char**)
         /*TODO
          *  [    ] Moveable by menubar
          *  [DONE] Borderless
-         *  [    ] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
-         *  [    ] Dockspace Home
-         *  [    ] Menubar
+         *  [DONE] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
+         *  [DONE] Dockspace Home
+         *  [DONE] Menubar
          */
 
         static bool opt_fullscreen = true;
