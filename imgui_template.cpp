@@ -359,7 +359,7 @@ int main(int, char**)
         return 1;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+Vulkan example", NULL, NULL);
 
     // Setup Vulkan
@@ -391,7 +391,7 @@ int main(int, char**)
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-    io.ConfigWindowsMoveFromTitleBarOnly = true;
+    //io.ConfigWindowsMoveFromTitleBarOnly = true;
     //io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
 
@@ -440,7 +440,7 @@ int main(int, char**)
     //*ImFont* font = io.Fonts->AddFontFromFileTTF("misc/dina.ttf", 16.0f);
     //IM_ASSERT(font != NULL);
 
-    static int size_pixels = 16;
+    static int size_pixels = 24;
     ImFont* dina = io.Fonts->AddFontFromFileTTF("../../../misc/dina.ttf", size_pixels);
     ImFont* dina_bold = io.Fonts->AddFontFromFileTTF("../../../misc/dina_bold.ttf", size_pixels);
     ImFont* roboto = io.Fonts->AddFontFromFileTTF("../../../misc/roboto.ttf", 18);
@@ -480,13 +480,6 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    // move with tool bar code bits
-
-    // ImGuiContext* GImGui = NULL;
-    // ImGuiContext& g = *GImGui;
-    // g.ActiveId
-    // GetInputSourceName(g.ActiveIdSource)
-
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -496,6 +489,14 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
+
+        // move with tool bar code bits
+        // g.ActiveId
+        // GetInputSourceName(g.ActiveIdSource)
+
+#pragma region Interface Event Handlers
+
+#pragma endregion Interface Event Handlers
 
         // Resize swap chain?
         if (g_SwapChainRebuild)
@@ -518,7 +519,7 @@ int main(int, char**)
 
 #pragma region Interface
         /*TODO
-         *  [    ] Moveable by menubar
+         *  [~~~~] Moveable by menubar io.ConfigWindowsMoveFromTitleBarOnly.
          *  [DONE] Borderless
          *  [DONE] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
          *  [DONE] Dockspace Home
@@ -542,6 +543,7 @@ int main(int, char**)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
             window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
             window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+            //glfwSetWindowPos(window, 100, 100);
         }
         else
         {
@@ -578,6 +580,15 @@ int main(int, char**)
 
         if (ImGui::BeginMenuBar())
         {
+
+            if (ImGui::IsItemHovered && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1)) {
+                ImVec2 m = ImGui::GetMousePos();
+                
+                int xpos, ypos;
+                glfwGetWindowPos(window, &xpos, &ypos);
+                // TODO apply offset to mouse position so it doesnt snap to the mouse.
+                glfwSetWindowPos(window, m.x, m.y);
+            }
 
             if (ImGui::BeginMenu("Options"))
             {
