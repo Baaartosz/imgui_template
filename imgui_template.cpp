@@ -18,6 +18,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
+#include <iostream>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -351,6 +352,10 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+static bool WithinRect(ImVec2 mouse, ImVec2 r_min, ImVec2 r_max) {
+    return mouse.x <= r_max.x && mouse.y <= r_max.y && mouse.x >= r_min.x && mouse.y >= r_min.y;
+}
+
 int main(int, char**)
 {
     // Setup GLFW window
@@ -440,7 +445,7 @@ int main(int, char**)
     //*ImFont* font = io.Fonts->AddFontFromFileTTF("misc/dina.ttf", 16.0f);
     //IM_ASSERT(font != NULL);
 
-    static int size_pixels = 24;
+    static int size_pixels = 18;
     ImFont* dina = io.Fonts->AddFontFromFileTTF("../../../misc/dina.ttf", size_pixels);
     ImFont* dina_bold = io.Fonts->AddFontFromFileTTF("../../../misc/dina_bold.ttf", size_pixels);
     ImFont* roboto = io.Fonts->AddFontFromFileTTF("../../../misc/roboto.ttf", 18);
@@ -478,6 +483,7 @@ int main(int, char**)
     // Our state
     bool show_demo_window = true;
     bool show_another_window = false;
+    ImVec2 titlebarPrev = ImVec2(0,0);
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
@@ -489,14 +495,6 @@ int main(int, char**)
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
-
-        // move with tool bar code bits
-        // g.ActiveId
-        // GetInputSourceName(g.ActiveIdSource)
-
-#pragma region Interface Event Handlers
-
-#pragma endregion Interface Event Handlers
 
         // Resize swap chain?
         if (g_SwapChainRebuild)
@@ -519,11 +517,12 @@ int main(int, char**)
 
 #pragma region Interface
         /*TODO
-         *  [~~~~] Moveable by menubar io.ConfigWindowsMoveFromTitleBarOnly.
+         *  [IN_REVIEW] Moveable by menubar
          *  [DONE] Borderless
          *  [DONE] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
          *  [DONE] Dockspace Home
          *  [DONE] Menubar
+         *  [    ] Minimize, Maximize and Close buttons on right side.
          */
 
         static bool opt_fullscreen = true;
@@ -563,7 +562,7 @@ int main(int, char**)
         if (!opt_padding)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-        ImGui::Begin("DockSpace Demo", 0,window_flags);
+        ImGui::Begin("DockSpace Demo", 0, window_flags);
         if (!opt_padding)
             ImGui::PopStyleVar();
 
@@ -580,28 +579,58 @@ int main(int, char**)
 
         if (ImGui::BeginMenuBar())
         {
+            // Boundaries for grabbing menubar on windowless.
+            float window_width = ImGui::GetWindowContentRegionWidth();
+            float window_height = ImGui::GetFrameHeight();
 
-            if (ImGui::IsItemHovered && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1)) {
-                ImVec2 m = ImGui::GetMousePos();
+            ImVec2 r_min = ImGui::GetWindowPos();
+            ImVec2 r_max;
+            r_max.x = r_min.x + window_width;
+            r_max.y = r_min.y + window_height;
+
+            double glfwMousePos_x, glfwMousePos_y;
+            glfwGetCursorPos(window, &glfwMousePos_x, &glfwMousePos_y);
+
+            ImVec2 m = io.MousePos;
+            //ImVec2 m = ImVec2(glfwMousePos_x, glfwMousePos_y);
+            ImVec2 initPos = io.MouseClickedPos[0];
+            if (WithinRect(m, r_min, r_max) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+                // Debug Draws
                 
                 int xpos, ypos;
                 glfwGetWindowPos(window, &xpos, &ypos);
-                // TODO apply offset to mouse position so it doesnt snap to the mouse.
-                glfwSetWindowPos(window, m.x, m.y);
+
+                ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+                ImVec2 mouseDrag = ImGui::GetMouseDragDelta(0);
+                ImVec2 differenceToViewportOrigin = ImVec2(viewport->WorkPos.x - m.x, viewport->WorkPos.y - m.y);
+            
+                int x = viewport->WorkPos.x + (io.MouseDelta.x); //xpos - differenceToViewportOrigin.x + mouseDrag.x
+                int y = viewport->WorkPos.y + (io.MouseDelta.y); //ypos - differenceToViewportOrigin.y + mouseDrag.y
+
+                glfwSetWindowPos(window, x, y); // POSSIBLE BUG cursor gets set to 1,1 when moving using function
+
+                ImGui::GetForegroundDrawList()->AddCircle(m, 10, IM_COL32(200, 100, 255, 255));
+                ImGui::GetForegroundDrawList()->AddLine(io.MouseClickedPos[0], viewport->WorkPos, ImGui::GetColorU32(ImGuiCol_Button), 4.0f);
             }
 
-            if (ImGui::BeginMenu("Options"))
+            if (ImGui::BeginMenu("File"))
             {
-                // Disabling fullscreen would allow the window to be moved to the front of other windows,
-                // which we can't undo at the moment without finer window depth/z control.
-                ImGui::MenuItem("Fullscreen", NULL);
-                ImGui::MenuItem("Padding", NULL);
+                if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Edit"))
+            {
+                if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+                if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
                 ImGui::Separator();
-                ImGui::MenuItem("Fullscreen", NULL);
-                ImGui::MenuItem("Padding", NULL);
+                if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+                if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+                if (ImGui::MenuItem("Paste", "CTRL+V")) {}
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
+
         }
 
         ImGui::End();
