@@ -517,12 +517,12 @@ int main(int, char**)
 
 #pragma region Interface
         /*TODO
-         *  [IN_REVIEW] Moveable by menubar
+         *  [DONE] Moveable by menubar
          *  [DONE] Borderless
          *  [DONE] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
          *  [DONE] Dockspace Home
          *  [DONE] Menubar
-         *  [    ] Minimize, Maximize and Close buttons on right side.
+         *  [TODO] Minimize, Maximize and Close buttons on right side.
          */
 
         static bool opt_fullscreen = true;
@@ -579,23 +579,8 @@ int main(int, char**)
 
         if (ImGui::BeginMenuBar())
         {
-            // Boundaries for grabbing menubar on windowless.
-            float window_width = ImGui::GetWindowContentRegionWidth();
-            float window_height = ImGui::GetFrameHeight();
-
-            ImVec2 r_min = ImGui::GetWindowPos();
-            ImVec2 r_max;
-            r_max.x = r_min.x + window_width;
-            r_max.y = r_min.y + window_height;
-
-            double glfwMousePos_x, glfwMousePos_y;
-            glfwGetCursorPos(window, &glfwMousePos_x, &glfwMousePos_y);
-
             ImVec2 m = io.MousePos;
-            //ImVec2 m = ImVec2(glfwMousePos_x, glfwMousePos_y);
-            ImVec2 initPos = io.MouseClickedPos[0];
-            if (WithinRect(m, r_min, r_max) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
-                // Debug Draws
+            if (ImGui::IsItemActive()  && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
                 
                 int xpos, ypos;
                 glfwGetWindowPos(window, &xpos, &ypos);
@@ -605,13 +590,10 @@ int main(int, char**)
                 ImVec2 mouseDrag = ImGui::GetMouseDragDelta(0);
                 ImVec2 differenceToViewportOrigin = ImVec2(viewport->WorkPos.x - m.x, viewport->WorkPos.y - m.y);
             
-                int x = viewport->WorkPos.x + (io.MouseDelta.x); //xpos - differenceToViewportOrigin.x + mouseDrag.x
-                int y = viewport->WorkPos.y + (io.MouseDelta.y); //ypos - differenceToViewportOrigin.y + mouseDrag.y
+                int x = viewport->WorkPos.x + (io.MouseDelta.x);
+                int y = viewport->WorkPos.y + (io.MouseDelta.y); 
 
-                glfwSetWindowPos(window, x, y); // POSSIBLE BUG cursor gets set to 1,1 when moving using function
-
-                ImGui::GetForegroundDrawList()->AddCircle(m, 10, IM_COL32(200, 100, 255, 255));
-                ImGui::GetForegroundDrawList()->AddLine(io.MouseClickedPos[0], viewport->WorkPos, ImGui::GetColorU32(ImGuiCol_Button), 4.0f);
+                glfwSetWindowPos(window, x, y);
             }
 
             if (ImGui::BeginMenu("File"))
