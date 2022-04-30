@@ -364,7 +364,7 @@ int main(int, char**)
         return 1;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
+    //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+Vulkan example", NULL, NULL);
 
     // Setup Vulkan
@@ -516,15 +516,6 @@ int main(int, char**)
         ImGui::NewFrame();
 
 #pragma region Interface
-        /*TODO
-         *  [DONE] Moveable by menubar
-         *  [DONE] Borderless
-         *  [DONE] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
-         *  [DONE] Dockspace Home
-         *  [DONE] Menubar
-         *  [TODO] Minimize, Maximize and Close buttons on right side.
-         */
-
         static bool opt_fullscreen = true;
         static bool opt_padding = false;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -579,16 +570,19 @@ int main(int, char**)
 
         if (ImGui::BeginMenuBar())
         {
-            ImVec2 m = io.MousePos;
+            /*TODO
+             *  [DONE] Moveable by menubar
+             *  [DONE] Borderless
+             *  [DONE] DPI Aware scaling (Useable on 4K monitors while retaining sharpness)
+             *  [DONE] Dockspace Home
+             *  [DONE] Menubar
+             *  [    ] Resize Windowless window ( should just be a glfw config thing )
+             *  [    ] Minimize, Maximize and Close buttons on right side.
+             */
             if (ImGui::IsItemActive()  && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
-                
-                int xpos, ypos;
-                glfwGetWindowPos(window, &xpos, &ypos);
-
+                ImVec2 m = io.MousePos;
                 ImGuiViewport* viewport = ImGui::GetMainViewport();
-
                 ImVec2 mouseDrag = ImGui::GetMouseDragDelta(0);
-                ImVec2 differenceToViewportOrigin = ImVec2(viewport->WorkPos.x - m.x, viewport->WorkPos.y - m.y);
             
                 int x = viewport->WorkPos.x + (io.MouseDelta.x);
                 int y = viewport->WorkPos.y + (io.MouseDelta.y); 
@@ -611,6 +605,14 @@ int main(int, char**)
                 if (ImGui::MenuItem("Paste", "CTRL+V")) {}
                 ImGui::EndMenu();
             }
+
+            // Possiblity of using this function to adding buttons that control the window, close, maximise, minimuse.
+            // ImGui::SameLine();
+
+            if (ImGui::BeginMenu("X")) {
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenuBar();
 
         }
