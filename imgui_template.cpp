@@ -570,6 +570,9 @@ int main(int, char**)
 
         if (ImGui::BeginMenuBar())
         {
+            ImVec2 m = io.MousePos;
+            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImVec2 mouseDrag = ImGui::GetMouseDragDelta(0);
             /*TODO
              *  [DONE] Moveable by menubar
              *  [DONE] Borderless
@@ -580,9 +583,6 @@ int main(int, char**)
              *  [    ] Minimize, Maximize and Close buttons on right side.
              */
             if (ImGui::IsItemActive()  && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
-                ImVec2 m = io.MousePos;
-                ImGuiViewport* viewport = ImGui::GetMainViewport();
-                ImVec2 mouseDrag = ImGui::GetMouseDragDelta(0);
             
                 int x = viewport->WorkPos.x + (io.MouseDelta.x);
                 int y = viewport->WorkPos.y + (io.MouseDelta.y); 
@@ -607,7 +607,7 @@ int main(int, char**)
             }
 
             // Possiblity of using this function to adding buttons that control the window, close, maximise, minimuse.
-            // ImGui::SameLine();
+            ImGui::SameLine(viewport->WorkSize.x - 30 );
 
             if (ImGui::BeginMenu("X")) {
                 ImGui::EndMenu();
