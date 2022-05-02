@@ -364,7 +364,7 @@ int main(int, char**)
         return 1;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+Vulkan example", NULL, NULL);
 
     // Setup Vulkan
@@ -580,7 +580,8 @@ int main(int, char**)
              *  [DONE] Dockspace Home
              *  [DONE] Menubar
              *  [    ] Resize Windowless window ( should just be a glfw config thing )
-             *  [    ] Minimize, Maximize and Close buttons on right side.
+             *  [DONE] Minimize, Maximize and Close buttons on right side.
+             *  [    ] buttons above do corrisponding operations.
              */
             if (ImGui::IsItemActive()  && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
             
@@ -607,10 +608,12 @@ int main(int, char**)
             }
 
             // Possiblity of using this function to adding buttons that control the window, close, maximise, minimuse.
-            ImGui::SameLine(viewport->WorkSize.x - 30 );
+            ImGui::SameLine(viewport->WorkSize.x -70);
 
-            if (ImGui::BeginMenu("X")) {
-                ImGui::EndMenu();
+            if (ImGui::MenuItem("-")) {}
+            if (ImGui::MenuItem("#")) {}
+            if (ImGui::MenuItem("X")) {
+                glfwSetWindowShouldClose(window, 1);
             }
 
             ImGui::EndMenuBar();
