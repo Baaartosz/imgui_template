@@ -364,7 +364,7 @@ int main(int, char**)
         return 1;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
+    //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Removes window frame.
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+Vulkan example", NULL, NULL);
 
     // Setup Vulkan
@@ -445,7 +445,7 @@ int main(int, char**)
     //*ImFont* font = io.Fonts->AddFontFromFileTTF("misc/dina.ttf", 16.0f);
     //IM_ASSERT(font != NULL);
 
-    static int size_pixels = 18;
+    static int size_pixels = 22;
     ImFont* dina = io.Fonts->AddFontFromFileTTF("../../../misc/dina.ttf", size_pixels);
     ImFont* dina_bold = io.Fonts->AddFontFromFileTTF("../../../misc/dina_bold.ttf", size_pixels);
     ImFont* roboto = io.Fonts->AddFontFromFileTTF("../../../misc/roboto.ttf", 18);
@@ -611,7 +611,12 @@ int main(int, char**)
             ImGui::SameLine(viewport->WorkSize.x -70);
 
             if (ImGui::MenuItem("-")) {}
-            if (ImGui::MenuItem("#")) {}
+            if (ImGui::MenuItem("#")) {
+                // [   ] Boolean Toggle for maximise
+                // [   ] Disable menubar move.
+                glfwSetWindowPos(window, 0, 0);
+                glfwSetWindowSize(window, 1920, 1080);
+            }
             if (ImGui::MenuItem("X")) {
                 glfwSetWindowShouldClose(window, 1);
             }
